@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@localhost:1521:xe</property>
+        <property name="hibernate.connection.username">system</property>
+        <property name="hibernate.connection.password">anagesh</property> <!-- IMPORTANT: SET YOUR ORACLE PASSWORD HERE -->
+
+        <!-- Automatically update the database schema -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="hibernate.show_sql">true</property>
+
+        <!-- Names of the annotated entity classes -->
+        <mapping class="com.Akkshay.expensemanager.model.Category"/>
+        <mapping class="com.Akkshay.expensemanager.model.Expense"/>
+
+    </session-factory>
+</hibernate-configuration>
+
