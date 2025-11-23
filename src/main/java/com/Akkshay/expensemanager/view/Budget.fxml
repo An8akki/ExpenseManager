@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Akkshay.expensemanager.controller.BudgetController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <children>
+      <Label text="Budget Planner">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      
+      <!-- Summary Card -->
+      <HBox spacing="20.0">
+         <children>
+            <VBox prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2); -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);">
+               <children>
+                  <Label text="💰 Total Budget" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblTotalBudget" text="Rs 0.00" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="32.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblBudgetCount" text="0 budgets planned" textFill="WHITE">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+            </VBox>
+            
+            <VBox prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: linear-gradient(to bottom right, #f093fb, #f5576c); -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);">
+               <children>
+                  <Label text="📅 Current Month" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblCurrentMonthBudget" text="Rs 0.00" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="32.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblCurrentMonth" text="No budget set" textFill="WHITE">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+            </VBox>
+         </children>
+      </HBox>
+      
+      <HBox spacing="10.0" alignment="CENTER_LEFT">
+         <children>
+            <TextField fx:id="txtAmount" promptText="Amount" />
+            <DatePicker fx:id="dpMonth" promptText="Month" />
+            <TextField fx:id="txtDescription" promptText="Description" prefWidth="300.0" />
+            <Button mnemonicParsing="false" onAction="#handleAddBudget" text="Add Budget" minWidth="100.0" />
+            <Button mnemonicParsing="false" onAction="#handleUpdateBudget" text="Update" minWidth="80.0" />
+            <Button mnemonicParsing="false" onAction="#handleDeleteBudget" text="Delete" minWidth="80.0" />
+         </children>
+      </HBox>
+      <TableView fx:id="tblBudget" prefHeight="400.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+        <columns>
+          <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+          <TableColumn fx:id="colAmount" prefWidth="100.0" text="Amount" />
+            <TableColumn fx:id="colMonth" prefWidth="100.0" text="Month" />
+            <TableColumn fx:id="colDescription" prefWidth="400.0" text="Description" />
+        </columns>
+      </TableView>
+   </children>
+</VBox>

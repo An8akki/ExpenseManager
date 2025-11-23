@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 public class ExpenseManagerController {
 
-    // --- FXML UI Components --- //
     @FXML private TextField descriptionField;
     @FXML private TextField amountField;
     @FXML private DatePicker datePicker;
@@ -31,46 +30,51 @@ public class ExpenseManagerController {
     @FXML private TableColumn<Expense, Category> categoryColumn;
     @FXML private PieChart expensePieChart;
 
-    // --- Backend and Data --- //
     private final ExpenseDAO expenseDAO = new ExpenseDAO();
     private final ObservableList<Expense> expenseList = FXCollections.observableArrayList();
     private final ObservableList<Category> categoryList = FXCollections.observableArrayList();
 
-    /**
-     * This method is automatically called after the fxml file has been loaded.
-     * It's used to initialize the UI components.
-     */
+    private Expense selectedExpense = null;
+
     @FXML
     public void initialize() {
-        // 1. Setup Table Columns
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("expenseDate"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
 
-        // 2. Load data from the database
         loadCategories();
         loadExpenses();
 
-        // 3. Set the items for the table and combobox
         expenseTable.setItems(expenseList);
         categoryComboBox.setItems(categoryList);
+        categoryComboBox.setEditable(true);
 
-        // 4. Set default date to today
         datePicker.setValue(LocalDate.now());
-
-        // 5. Update the pie chart
         updatePieChart();
+
+        // Row click for update functionality
+        expenseTable.setRowFactory(tv -> {
+            TableRow<Expense> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 1) {
+                    selectedExpense = row.getItem();
+                    descriptionField.setText(selectedExpense.getDescription());
+                    amountField.setText(selectedExpense.getAmount().toString());
+                    datePicker.setValue(selectedExpense.getExpenseDate());
+                    categoryComboBox.setValue(selectedExpense.getCategory());
+                }
+            });
+            return row;
+        });
     }
 
-    /**
-     * Handles the "Add Expense" button click.
-     * Validates input and saves the new expense.
-     */
     @FXML
     private void handleAddExpense() {
-        // --- Input Validation --- //
-        if (descriptionField.getText().isEmpty() || amountField.getText().isEmpty() || datePicker.getValue() == null || categoryComboBox.getValue() == null) {
+        if (descriptionField.getText().isEmpty() ||
+                amountField.getText().isEmpty() ||
+                datePicker.getValue() == null ||
+                (categoryComboBox.getValue() == null && categoryComboBox.getEditor().getText().trim().isEmpty())) {
             statusLabel.setText("All fields are required.");
             return;
         }
@@ -87,44 +91,82 @@ public class ExpenseManagerController {
             return;
         }
 
-        // --- Create and Save Expense --- //
-        Expense newExpense = new Expense(
-                amount,
-                datePicker.getValue(),
-                descriptionField.getText(),
-                categoryComboBox.getValue()
-        );
+        // --- Robust category logic for ComboBox (typed or selected) ---
+        Object catObj = categoryComboBox.getValue();
+        Category category;
+        if (catObj instanceof Category) {
+            category = (Category) catObj;
+        } else if (catObj instanceof String) {
+            String catText = ((String) catObj).trim();
+            if (!catText.isEmpty()) {
+                category = new Category(catText);
+                expenseDAO.saveCategory(category);    // store new category!
+                loadCategories();                     // refresh dropdown
+                // Now select the correct added Category object
+                for (Category c : categoryList) {
+                    if (c.getCategoryName().equals(catText)) {
+                        category = c;
+                        break;
+                    }
+                }
+                categoryComboBox.setValue(category);
+            } else {
+                statusLabel.setText("Category is required.");
+                return;
+            }
+        } else {
+            statusLabel.setText("Category is required.");
+            return;
+        }
+        updateRecentCategory(category);
 
-        expenseDAO.saveExpense(newExpense);
-        loadExpenses(); // Reload expenses to show the new one
-        updatePieChart(); // Update chart
+        if (selectedExpense == null) {
+            // Add new Expense
+            Expense newExpense = new Expense(
+                    amount,
+                    datePicker.getValue(),
+                    descriptionField.getText(),
+                    category
+            );
+            expenseDAO.saveExpense(newExpense);
+            statusLabel.setText("Expense added successfully!");
+        } else {
+            // Update existing Expense
+            selectedExpense.setDescription(descriptionField.getText());
+            selectedExpense.setAmount(amount);
+            selectedExpense.setExpenseDate(datePicker.getValue());
+            selectedExpense.setCategory(category);
+            expenseDAO.updateExpense(selectedExpense);
+            statusLabel.setText("Expense updated successfully!");
+            selectedExpense = null;
+        }
+        loadExpenses();
+        updatePieChart();
         clearForm();
-        statusLabel.setText("Expense added successfully!");
     }
 
-    /**
-     * Handles the "Delete Selected" button click.
-     * Removes the selected expense from the table and database.
-     */
     @FXML
     private void handleDeleteExpense() {
-        Expense selectedExpense = expenseTable.getSelectionModel().getSelectedItem();
-        if (selectedExpense == null) {
+        Expense exp = expenseTable.getSelectionModel().getSelectedItem();
+        if (exp == null) {
             statusLabel.setText("Please select an expense to delete.");
             return;
         }
-
-        expenseDAO.deleteExpense(selectedExpense);
-        loadExpenses(); // Reload to reflect deletion
-        updatePieChart(); // Update chart
+        expenseDAO.deleteExpense(exp);
+        loadExpenses();
+        updatePieChart();
         statusLabel.setText("Expense deleted successfully.");
     }
 
-    /**
-     * Loads categories from the database and populates the category list.
-     */
+    @FXML
+    private void handleClearForm() {
+        clearForm();
+        selectedExpense = null;
+        expenseTable.getSelectionModel().clearSelection();
+        statusLabel.setText(""); // Clear status label if you want
+    }
+
     private void loadCategories() {
-        // For simplicity, let's add some default categories if none exist
         List<Category> categories = expenseDAO.getAllCategories();
         if (categories.isEmpty()) {
             expenseDAO.saveCategory(new Category("Food"));
@@ -137,39 +179,39 @@ public class ExpenseManagerController {
         categoryList.setAll(categories);
     }
 
-    /**
-     * Loads all expenses from the database into the observable list.
-     */
     private void loadExpenses() {
-        List<Expense> expenses = expenseDAO.getAllExpenses();
-        expenseList.setAll(expenses);
+        expenseList.setAll(expenseDAO.getAllExpenses());
     }
 
-    /**
-     * Updates the pie chart with the current expense data.
-     */
     private void updatePieChart() {
         Map<String, Double> expenseByCategory = expenseList.stream()
                 .collect(Collectors.groupingBy(
-                        expense -> expense.getCategory().getCategoryName(),
-                        Collectors.summingDouble(expense -> expense.getAmount().doubleValue())
+                        e -> e.getCategory().getCategoryName(),
+                        Collectors.summingDouble(e -> e.getAmount().doubleValue())
                 ));
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         expenseByCategory.forEach((category, total) ->
                 pieChartData.add(new PieChart.Data(category, total))
         );
-
         expensePieChart.setData(pieChartData);
     }
 
-    /**
-     * Clears the input form fields.
-     */
     private void clearForm() {
         descriptionField.clear();
         amountField.clear();
         datePicker.setValue(LocalDate.now());
         categoryComboBox.getSelectionModel().clearSelection();
+        categoryComboBox.getEditor().clear();
+    }
+
+    // Recent category helper (optionally limits list to last N, e.g., 10)
+    private void updateRecentCategory(Category category) {
+        categoryList.remove(category);
+        categoryList.add(0, category);
+        if (categoryList.size() > 10) {
+            categoryList.remove(10, categoryList.size());
+        }
+        categoryComboBox.setItems(categoryList);
     }
 }

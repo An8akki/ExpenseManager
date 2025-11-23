@@ -88,5 +88,9 @@ public class Expense {
     public void setCategory(Category category) {
         this.category = category;
     }
-}
 
+    // Helper method for TableView to display category name
+    public String getCategoryName() {
+        return category != null ? category.getCategoryName() : "";
+    }
+}

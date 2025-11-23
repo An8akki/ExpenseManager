@@ -13,8 +13,6 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // For Oracle 12c+
-    // Note: For Oracle 11g, the sequence and trigger handle this.
-    // Hibernate understands this and works correctly.
     @Column(name = "category_id")
     private Long categoryId;
 
@@ -28,12 +26,10 @@ public class Category {
 
     // --- Constructors --- //
 
-    /**
-     * Default constructor required by Hibernate.
-     */
-    public Category() {
-    }
+    /** Default constructor required by Hibernate. */
+    public Category() {}
 
+    /** Constructor for use when creating a new category by name. */
     public Category(String categoryName) {
         this.categoryName = categoryName;
     }
@@ -64,13 +60,23 @@ public class Category {
         this.expenses = expenses;
     }
 
-    /**
-     * The toString() method is overridden to return the category name.
-     * This is very useful for displaying categories in a ComboBox (dropdown menu) in the UI.
-     */
+    /** Display the category name in UI dropdowns etc. */
     @Override
     public String toString() {
         return categoryName;
     }
-}
 
+    /** For ComboBox and collection support—categories with the same name are considered equal. */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Category)) return false;
+        Category category = (Category) o;
+        return categoryName != null && categoryName.equals(category.categoryName);
+    }
+
+    @Override
+    public int hashCode() {
+        return categoryName != null ? categoryName.hashCode() : 0;
+    }
+}

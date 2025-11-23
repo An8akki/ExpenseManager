@@ -19,6 +19,8 @@
         <!-- Names of the annotated entity classes -->
         <mapping class="com.Akkshay.expensemanager.model.Category"/>
         <mapping class="com.Akkshay.expensemanager.model.Expense"/>
+        <mapping class="com.Akkshay.expensemanager.model.Budget"/>
+        <mapping class="com.Akkshay.expensemanager.model.Savings"/>
 
     </session-factory>
 </hibernate-configuration>

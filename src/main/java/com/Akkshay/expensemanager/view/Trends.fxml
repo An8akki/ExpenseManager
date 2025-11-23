@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Akkshay.expensemanager.controller.TrendsController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <children>
+      <Label text="Trends &amp; Insights">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <LineChart fx:id="lineChart" title="Budget vs Spend vs Savings" VBox.vgrow="ALWAYS" createSymbols="true" legendVisible="true">
+        <xAxis>
+          <CategoryAxis label="Month" side="BOTTOM" fx:id="xAxis" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis label="Amount (Rs)" side="LEFT" />
+        </yAxis>
+      </LineChart>
+      <Label fx:id="lblInsight" text="Insights will appear here..." wrapText="true">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+   </children>
+</VBox>

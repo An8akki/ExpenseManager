@@ -13,7 +13,8 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ExpenseManagerView.fxml")));
+        Parent root = FXMLLoader.load(
+                Objects.requireNonNull(getClass().getResource("/com/Akkshay/expensemanager/view/MainLayout.fxml")));
         primaryStage.setTitle("Personal Expense Manager");
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.show();

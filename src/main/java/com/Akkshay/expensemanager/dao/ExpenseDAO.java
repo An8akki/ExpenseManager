@@ -17,9 +17,19 @@ public class ExpenseDAO {
             session.persist(expense);
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    public void updateExpense(Expense expense) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.merge(expense);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
     }
@@ -31,9 +41,7 @@ public class ExpenseDAO {
             session.remove(expense);
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
     }
@@ -50,10 +58,6 @@ public class ExpenseDAO {
         }
     }
 
-    /**
-     * Saves a new category to the database.
-     * @param category The Category object to save.
-     */
     public void saveCategory(Category category) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -61,11 +65,8 @@ public class ExpenseDAO {
             session.persist(category);
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
     }
 }
-

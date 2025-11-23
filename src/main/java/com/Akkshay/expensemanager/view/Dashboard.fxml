@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/19"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.Akkshay.expensemanager.controller.DashboardController"
+            prefWidth="1100" prefHeight="650"
+            style="-fx-background-color: linear-gradient(to right, #e0eafc 0%, #cfdef3 100%);">
+
+    <top>
+        <Label text="Personal Expense Manager"
+               style="-fx-font-size: 32pt; -fx-font-family: 'Segoe UI Semibold'; -fx-text-fill: #222; -fx-padding: 24 0 10 0;"
+               BorderPane.alignment="CENTER"/>
+    </top>
+
+    <center>
+        <GridPane alignment="CENTER" hgap="42" vgap="38">
+            <VBox spacing="14" alignment="CENTER">
+                <ImageView fitWidth="54" fitHeight="54" pickOnBounds="true"
+                           image="@../icons/add_expense.png"/>
+                <Button text="Add Expense" onAction="#openAddExpense" styleClass="dashboard-tile"/>
+            </VBox>
+            <VBox spacing="14" alignment="CENTER">
+                <ImageView fitWidth="54" fitHeight="54" pickOnBounds="true"
+                           image="@../icons/history.png"/>
+                <Button text="Expense History" onAction="#openExpenseHistory" styleClass="dashboard-tile"/>
+            </VBox>
+            <VBox spacing="14" alignment="CENTER">
+                <ImageView fitWidth="54" fitHeight="54" pickOnBounds="true"
+                           image="@../icons/track_spending.png"/>
+                <Button text="Track Spending" onAction="#openTrackSpending" styleClass="dashboard-tile"/>
+            </VBox>
+            <VBox spacing="14" alignment="CENTER">
+                <ImageView fitWidth="54" fitHeight="54" pickOnBounds="true"
+                           image="@../icons/budget.png"/>
+                <Button text="Monthly Budget" onAction="#openMonthlyBudget" styleClass="dashboard-tile"/>
+            </VBox>
+            <VBox spacing="14" alignment="CENTER">
+                <ImageView fitWidth="54" fitHeight="54" pickOnBounds="true"
+                           image="@../icons/analysis.png"/>
+                <Button text="Spend Analysis" onAction="#openSpendAnalysis" styleClass="dashboard-tile"/>
+            </VBox>
+            <VBox spacing="14" alignment="CENTER">
+                <ImageView fitWidth="54" fitHeight="54" pickOnBounds="true"
+                           image="@../icons/tips.png"/>
+                <Button text="Tips & Advice" onAction="#openTipsAdvice" styleClass="dashboard-tile"/>
+            </VBox>
+            <VBox spacing="14" alignment="CENTER">
+                <ImageView fitWidth="54" fitHeight="54" pickOnBounds="true"
+                           image="@../icons/savings.png"/>
+                <Button text="Savings" onAction="#openSavings" styleClass="dashboard-tile"/>
+            </VBox>
+        </GridPane>
+    </center>
+</BorderPane>
